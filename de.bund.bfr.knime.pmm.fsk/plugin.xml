@@ -28,6 +28,12 @@
        factory-class="de.bund.bfr.knime.pmm.fskx.editor.FskEditorNodeFactory"
        id="de.bund.bfr.knime.pmm.fskx.editor.FskEditorNodeFactory">
  </node>
+ <node
+       category-path="/pmmlab/reader"
+       deprecated="false"
+       factory-class="de.bund.bfr.knime.pmm.combinedfsk.creator.CombinedFskCreatorNodeFactory"
+       id="de.bund.bfr.knime.pmm.combinedfsk.creator.CombinedFskCreatorNodeFactory">
+ </node>
 	<!-- Extended KNIME R nodes -->
 </extension>
 
@@ -61,5 +67,14 @@
             objectSerializer="de.bund.bfr.knime.pmm.fskx.port.FskPortObject$Serializer"
             specClass="de.bund.bfr.knime.pmm.fskx.port.FskPortObjectSpec"
             specSerializer="de.bund.bfr.knime.pmm.fskx.port.FskPortObjectSpec$Serializer"/>
+      <portType
+            color="#FF8300"
+            hidden="false"
+            name="Combined FSK object"
+            objectClass="de.bund.bfr.knime.pmm.combinedfsk.port.CombinedFskPortObject"
+            objectSerializer="de.bund.bfr.knime.pmm.combinedfsk.port.CombinedFskPortObject$Serializer"
+            specClass="de.bund.bfr.knime.pmm.combinedfsk.port.CombinedFskPortObjectSpec"
+            specSerializer="de.bund.bfr.knime.pmm.combinedfsk.port.CombinedFskPortObjectSpec$Serializer">
+      </portType>
    </extension>
 </plugin>
