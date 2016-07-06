@@ -11,6 +11,8 @@ import de.bund.bfr.openfsmr.FSMRTemplate;
  */
 public class FskModel implements Serializable {
 
+	private static final long serialVersionUID = 7918060170303915080L;
+	
 	private String modelScript;
 	private String parametersScript;
 	private String visualizationScript;
