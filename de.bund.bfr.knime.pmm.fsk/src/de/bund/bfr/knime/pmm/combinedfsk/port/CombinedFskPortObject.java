@@ -7,7 +7,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
+import javax.swing.Box;
+import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionMonitor;
@@ -17,6 +23,8 @@ import org.knime.core.node.port.PortObjectZipInputStream;
 import org.knime.core.node.port.PortObjectZipOutputStream;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
+
+import de.bund.bfr.knime.pmm.fskx.ui.ScriptPanel;
 
 /**
  * A port object for combined FSK models.
@@ -71,8 +79,32 @@ public class CombinedFskPortObject implements PortObject {
 
 	@Override
 	public JComponent[] getViews() {
-		// TODO Auto-generated method stub
-		return null;
+		return new JComponent[] { createView() };
+	}
+
+	private Box createView() {
+		DefaultListModel<String> listModel = new DefaultListModel<>();
+		for (int i = 0; i < models.length; i++) {
+			listModel.addElement("Model " + i);
+		}
+
+		JScrollPane scrollPane = new JScrollPane(new JList<>(listModel));
+
+		JPanel modelScriptPanel = new ScriptPanel("Model script", models[0].getModelScript(), false);
+		JPanel paramScriptPanel = new ScriptPanel("Param script", models[0].getParametersScript(), false);
+		JPanel vizScriptPanel = new ScriptPanel("Visualization script", models[0].getVisualizationScript(), false);
+
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.add("Model script", modelScriptPanel);
+		tabbedPane.addTab("Parameters script", paramScriptPanel);
+		tabbedPane.addTab("Visualization script", vizScriptPanel);
+
+		Box box = Box.createHorizontalBox();
+		box.add(scrollPane);
+		box.add(tabbedPane);
+		box.setName("Fsk models");
+
+		return box;
 	}
 
 	/**
