@@ -33,7 +33,7 @@ import de.bund.bfr.knime.pmm.FSMRUtils;
 import de.bund.bfr.knime.pmm.combinedfsk.port.CombinedFskPortObject;
 import de.bund.bfr.knime.pmm.combinedfsk.port.CombinedFskPortObjectSpec;
 import de.bund.bfr.knime.pmm.combinedfsk.port.FskModel;
-import de.bund.bfr.knime.pmm.combinedfsk.port.Replacement;
+import de.bund.bfr.knime.pmm.combinedfsk.port.VariableLink;
 import de.bund.bfr.knime.pmm.common.KnimeUtils;
 import de.bund.bfr.knime.pmm.fskx.RScript;
 import de.bund.bfr.knime.pmm.fskx.controller.IRController.RException;
@@ -167,7 +167,7 @@ public class CombinedFskCreatorNodeModel extends NodeModel {
 
 		// Return port object
 		FskModel fskModel = new FskModel(model, param, viz, template, null, libs);
-		CombinedFskPortObject portObject = new CombinedFskPortObject(new FskModel[] { fskModel }, new Replacement[] {});
+		CombinedFskPortObject portObject = new CombinedFskPortObject(new FskModel[] { fskModel }, new VariableLink[] {});
 		return new PortObject[] { portObject };
 	}
 

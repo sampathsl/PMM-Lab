@@ -40,14 +40,14 @@ public class CombinedFskPortObject implements PortObject {
 	public static final PortType TYPE = PortTypeRegistry.getInstance().getPortType(CombinedFskPortObject.class);
 
 	private final FskModel[] models;
-	private final Replacement[] replacements;
+	private final VariableLink[] links;
 
 	private final int id;
 	private static int numOfInstances = 0;
 
-	public CombinedFskPortObject(final FskModel[] models, final Replacement[] replacements) {
+	public CombinedFskPortObject(final FskModel[] models, final VariableLink[] links) {
 		this.models = models;
-		this.replacements = replacements;
+		this.links = links;
 
 		id = numOfInstances;
 		numOfInstances++;
@@ -61,8 +61,8 @@ public class CombinedFskPortObject implements PortObject {
 		return models;
 	}
 
-	public Replacement[] getReplacements() {
-		return replacements;
+	public VariableLink[] getLinks() {
+		return links;
 	}
 
 	// --- PortObject ---
@@ -123,10 +123,10 @@ public class CombinedFskPortObject implements PortObject {
 				out.closeEntry();
 			}
 
-			for (Replacement replacement : portObject.replacements) {
-				out.putNextEntry(new ZipEntry("replacement"));
+			for (VariableLink link : portObject.links) {
+				out.putNextEntry(new ZipEntry("link"));
 				ObjectOutputStream objectStream = new ObjectOutputStream(out);
-				objectStream.writeObject(replacement);
+				objectStream.writeObject(link);
 				out.closeEntry();
 			}
 
@@ -138,7 +138,7 @@ public class CombinedFskPortObject implements PortObject {
 				ExecutionMonitor exec) throws IOException, CanceledExecutionException {
 
 			List<FskModel> modelList = new LinkedList<>();
-			List<Replacement> replacementList = new LinkedList<>();
+			List<VariableLink> linkList = new LinkedList<>();
 
 			ZipEntry entry;
 			while ((entry = in.getNextEntry()) != null) {
@@ -148,7 +148,7 @@ public class CombinedFskPortObject implements PortObject {
 					if (entry.getName().equals("model")) {
 						modelList.add((FskModel) objectStream.readObject());
 					} else if (entry.getName().equals("replacement")) {
-						replacementList.add((Replacement) objectStream.readObject());
+						linkList.add((VariableLink) objectStream.readObject());
 					}
 				} catch (ClassNotFoundException e) {
 					throw new RuntimeException(e.getMessage(), e.getCause());
@@ -157,7 +157,7 @@ public class CombinedFskPortObject implements PortObject {
 			in.close();
 
 			FskModel[] modelsArray = modelList.toArray(new FskModel[modelList.size()]);
-			Replacement[] replacementsArray = replacementList.toArray(new Replacement[replacementList.size()]);
+			VariableLink[] replacementsArray = linkList.toArray(new VariableLink[linkList.size()]);
 
 			return new CombinedFskPortObject(modelsArray, replacementsArray);
 		}
