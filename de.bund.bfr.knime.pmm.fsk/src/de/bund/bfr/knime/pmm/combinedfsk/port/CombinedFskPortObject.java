@@ -1,5 +1,6 @@
 package de.bund.bfr.knime.pmm.combinedfsk.port;
 
+import java.awt.BorderLayout;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,6 +15,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.ListSelectionModel;
 
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionMonitor;
@@ -94,10 +96,19 @@ public class CombinedFskPortObject implements PortObject {
 		JPanel paramScriptPanel = new ScriptPanel("Param script", models[0].getParametersScript(), false);
 		JPanel vizScriptPanel = new ScriptPanel("Visualization script", models[0].getVisualizationScript(), false);
 
+		// Libraries panel
+		String[] libNames;
+		if (models[0].isSetLibraries()) {
+			libNames = models[0].getLibraries().toArray(new String[models[0].getLibraries().size()]);
+		} else {
+			libNames = new String[0];
+		}
+
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.add("Model script", modelScriptPanel);
 		tabbedPane.addTab("Parameters script", paramScriptPanel);
 		tabbedPane.addTab("Visualization script", vizScriptPanel);
+		tabbedPane.addTab("Libraries", new LibrariesPanel(libNames));
 
 		Box box = Box.createHorizontalBox();
 		box.add(scrollPane);
@@ -160,6 +171,22 @@ public class CombinedFskPortObject implements PortObject {
 			VariableLink[] replacementsArray = linkList.toArray(new VariableLink[linkList.size()]);
 
 			return new CombinedFskPortObject(modelsArray, replacementsArray);
+		}
+	}
+
+	private class LibrariesPanel extends JPanel {
+
+		private static final long serialVersionUID = 5664169861264900195L;
+
+		LibrariesPanel(String[] libNames) {
+			super(new BorderLayout());
+			setName("Libraries list");
+
+			JList<String> list = new JList<>(libNames);
+			list.setLayoutOrientation(JList.VERTICAL);
+			list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+			add(new JScrollPane(list));
 		}
 	}
 }

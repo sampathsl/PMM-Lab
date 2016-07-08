@@ -217,4 +217,20 @@ public class FskModel implements Serializable {
 	public void setLibraries(final List<String> libraries) {
 		this.libraries = libraries;
 	}
+	
+	/**
+	 * Unsets the R library files.
+	 */
+	public void unsetLibraries() {
+		libraries = null;
+	}
+	
+	/**
+	 * Return whether the libraries are set.
+	 * 
+	 * @return whether the libraries are set
+	 */
+	public boolean isSetLibraries() {
+		return libraries != null;
+	}
 }
