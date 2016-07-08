@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
 import javax.swing.Box;
@@ -26,7 +28,10 @@ import org.knime.core.node.port.PortObjectZipInputStream;
 import org.knime.core.node.port.PortObjectZipOutputStream;
 import org.knime.core.node.port.PortType;
 import org.knime.core.node.port.PortTypeRegistry;
+import org.rosuda.REngine.REXPMismatchException;
 
+import de.bund.bfr.knime.pmm.fskx.controller.IRController.RException;
+import de.bund.bfr.knime.pmm.fskx.controller.LibRegistry;
 import de.bund.bfr.knime.pmm.fskx.ui.ScriptPanel;
 
 /**
@@ -168,7 +173,33 @@ public class CombinedFskPortObject implements PortObject {
 			}
 			in.close();
 
+			installLibs(models);
+
 			return new CombinedFskPortObject(models, links);
+		}
+
+		// Retrieves library names and install missing libraries
+		private static void installLibs(final List<FskModel> models) throws IOException {
+			
+			// Retrieves the names the libraries used in all the models
+			HashSet<String> libraryNames = new HashSet<>();
+			for (FskModel model : models) {
+				if (model.isSetLibraries()) {
+					libraryNames.addAll(model.getLibraries());
+				}
+			}
+
+			// If any library is missing installs it
+			try {
+				LibRegistry libReg = LibRegistry.instance();
+				List<String> missingLibs = libraryNames.stream().filter(libReg::isInstalled)
+						.collect(Collectors.toList());
+				if (!missingLibs.isEmpty()) {
+					libReg.installLibs(missingLibs);
+				}
+			} catch (RException | REXPMismatchException e) {
+				throw new IOException(e.getMessage(), e.getCause());
+			}
 		}
 	}
 
