@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -41,15 +42,15 @@ public class CombinedFskPortObject implements PortObject {
 	 */
 	public static final PortType TYPE = PortTypeRegistry.getInstance().getPortType(CombinedFskPortObject.class);
 
-	private final FskModel[] models;
-	private final VariableLink[] links;
+	private final ArrayList<FskModel> models;
+	private final ArrayList<VariableLink> links;
 
 	private final int id;
 	private static int numOfInstances = 0;
 
-	public CombinedFskPortObject(final FskModel[] models, final VariableLink[] links) {
-		this.models = models;
-		this.links = links;
+	public CombinedFskPortObject(final List<FskModel> models, final List<VariableLink> links) {
+		this.models = new ArrayList<>(models);
+		this.links = new ArrayList<>(links);
 
 		id = numOfInstances;
 		numOfInstances++;
@@ -59,11 +60,11 @@ public class CombinedFskPortObject implements PortObject {
 		return id;
 	}
 
-	public FskModel[] getModels() {
+	public List<FskModel> getModels() {
 		return models;
 	}
 
-	public VariableLink[] getLinks() {
+	public List<VariableLink> getLinks() {
 		return links;
 	}
 
@@ -86,20 +87,20 @@ public class CombinedFskPortObject implements PortObject {
 
 	private Box createView() {
 		DefaultListModel<String> listModel = new DefaultListModel<>();
-		for (int i = 0; i < models.length; i++) {
+		for (int i = 0; i < models.size(); i++) {
 			listModel.addElement("Model " + i);
 		}
 
 		JScrollPane scrollPane = new JScrollPane(new JList<>(listModel));
 
-		JPanel modelScriptPanel = new ScriptPanel("Model script", models[0].getModelScript(), false);
-		JPanel paramScriptPanel = new ScriptPanel("Param script", models[0].getParametersScript(), false);
-		JPanel vizScriptPanel = new ScriptPanel("Visualization script", models[0].getVisualizationScript(), false);
+		JPanel modelScriptPanel = new ScriptPanel("Model script", models.get(0).getModelScript(), false);
+		JPanel paramScriptPanel = new ScriptPanel("Param script", models.get(0).getParametersScript(), false);
+		JPanel vizScriptPanel = new ScriptPanel("Visualization script", models.get(0).getVisualizationScript(), false);
 
 		// Libraries panel
 		String[] libNames;
-		if (models[0].isSetLibraries()) {
-			libNames = models[0].getLibraries().toArray(new String[models[0].getLibraries().size()]);
+		if (models.get(0).isSetLibraries()) {
+			libNames = models.get(0).getLibraries().toArray(new String[0]);
 		} else {
 			libNames = new String[0];
 		}
@@ -148,8 +149,8 @@ public class CombinedFskPortObject implements PortObject {
 		public CombinedFskPortObject loadPortObject(PortObjectZipInputStream in, PortObjectSpec spec,
 				ExecutionMonitor exec) throws IOException, CanceledExecutionException {
 
-			List<FskModel> modelList = new LinkedList<>();
-			List<VariableLink> linkList = new LinkedList<>();
+			LinkedList<FskModel> models = new LinkedList<>();
+			LinkedList<VariableLink> links = new LinkedList<>();
 
 			ZipEntry entry;
 			while ((entry = in.getNextEntry()) != null) {
@@ -157,9 +158,9 @@ public class CombinedFskPortObject implements PortObject {
 				ObjectInputStream objectStream = new ObjectInputStream(in);
 				try {
 					if (entry.getName().equals("model")) {
-						modelList.add((FskModel) objectStream.readObject());
+						models.add((FskModel) objectStream.readObject());
 					} else if (entry.getName().equals("replacement")) {
-						linkList.add((VariableLink) objectStream.readObject());
+						links.add((VariableLink) objectStream.readObject());
 					}
 				} catch (ClassNotFoundException e) {
 					throw new RuntimeException(e.getMessage(), e.getCause());
@@ -167,10 +168,7 @@ public class CombinedFskPortObject implements PortObject {
 			}
 			in.close();
 
-			FskModel[] modelsArray = modelList.toArray(new FskModel[modelList.size()]);
-			VariableLink[] replacementsArray = linkList.toArray(new VariableLink[linkList.size()]);
-
-			return new CombinedFskPortObject(modelsArray, replacementsArray);
+			return new CombinedFskPortObject(models, links);
 		}
 	}
 

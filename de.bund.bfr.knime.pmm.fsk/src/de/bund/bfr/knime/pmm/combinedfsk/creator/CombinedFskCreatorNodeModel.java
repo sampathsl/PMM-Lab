@@ -3,6 +3,7 @@ package de.bund.bfr.knime.pmm.combinedfsk.creator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -173,7 +174,8 @@ public class CombinedFskCreatorNodeModel extends NodeModel {
 		}
 
 		// Return port object
-		CombinedFskPortObject portObject = new CombinedFskPortObject(new FskModel[] { fskModel }, new VariableLink[] {});
+		CombinedFskPortObject portObject = new CombinedFskPortObject(Arrays.asList(fskModel),
+				new ArrayList<VariableLink>());
 		return new PortObject[] { portObject };
 	}
 
