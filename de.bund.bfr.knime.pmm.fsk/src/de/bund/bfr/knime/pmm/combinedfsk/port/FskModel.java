@@ -2,6 +2,7 @@ package de.bund.bfr.knime.pmm.combinedfsk.port;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.bund.bfr.openfsmr.FSMRTemplate;
@@ -18,7 +19,7 @@ public class FskModel implements Serializable {
 	private String visualizationScript = null;
 	private FSMRTemplate template = null;
 	private File workspace = null;
-	private List<String> libraries = null;
+	private List<String> libraries = new ArrayList<>();
 
 	// --- model script ---
 	/**
@@ -205,7 +206,9 @@ public class FskModel implements Serializable {
 
 	// --- libraries ---
 	/**
-	 * Return the R library file names.
+	 * Returns the R library file names. If not set returns empty list.
+	 * 
+	 * @return the R library file names
 	 */
 	public List<String> getLibraries() {
 		return libraries;
@@ -213,16 +216,21 @@ public class FskModel implements Serializable {
 
 	/**
 	 * Sets the R library files.
+	 * 
+	 * @param libraries empty lists are ignored
 	 */
 	public void setLibraries(final List<String> libraries) {
-		this.libraries = libraries;
+		if (!libraries.isEmpty()) {
+			this.libraries.clear();
+			this.libraries.addAll(libraries);
+		}
 	}
 	
 	/**
 	 * Unsets the R library files.
 	 */
 	public void unsetLibraries() {
-		libraries = null;
+		libraries.clear();
 	}
 	
 	/**
@@ -231,6 +239,6 @@ public class FskModel implements Serializable {
 	 * @return whether the libraries are set
 	 */
 	public boolean isSetLibraries() {
-		return libraries != null;
+		return !libraries.isEmpty();
 	}
 }

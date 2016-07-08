@@ -1,7 +1,8 @@
 package de.bund.bfr.knime.pmm.combinedfsk.archive;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,7 +28,7 @@ public class ModelFiles {
 
 	private final Map<Key, String> optionalFiles = new HashMap<>();
 
-	private String[] libraries;
+	private ArrayList<String> libraries = new ArrayList<>();
 
 	// --- id ---
 	public int getId() {
@@ -235,14 +236,11 @@ public class ModelFiles {
 
 	// --- libraries ---
 	/**
-	 * Returns the libraries.
+	 * Returns the libraries. If not set returns empty list.
 	 *
 	 * @return the libraries
-	 * @throw NullPointerException if the libraries are not set.
 	 */
-	public String[] getLibraries() {
-		if (libraries == null)
-			throw new RuntimeException("libraries not set");
+	public List<String> getLibraries() {
 		return libraries;
 	}
 
@@ -250,18 +248,20 @@ public class ModelFiles {
 	 * Sets the libraries.
 	 *
 	 * @param libraries
-	 *            null or empty arrays are ignored
+	 *            empty lists are ignored
 	 */
-	public void setLibraries(String[] libraries) {
-		if (libraries != null && libraries.length > 0)
-			this.libraries = libraries;
+	public void setLibraries(List<String> libraries) {
+		if (!libraries.isEmpty()) {
+			this.libraries.clear();
+			this.libraries.addAll(libraries);
+		}
 	}
 
 	/**
 	 * Unsets the libraries.
 	 */
 	public void unsetLibraries() {
-		libraries = null;
+		libraries.clear();
 	}
 
 	/**
@@ -270,7 +270,7 @@ public class ModelFiles {
 	 * @return whether the libraries are set
 	 */
 	public boolean isSetLibraries() {
-		return libraries != null;
+		return !libraries.isEmpty();
 	}
 
 	@Override
@@ -278,7 +278,7 @@ public class ModelFiles {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + id;
-		result = prime * result + Arrays.hashCode(libraries);
+		result = prime * result + ((libraries == null) ? 0 : libraries.hashCode());
 		result = prime * result + ((optionalFiles == null) ? 0 : optionalFiles.hashCode());
 		return result;
 	}
@@ -294,7 +294,10 @@ public class ModelFiles {
 		ModelFiles other = (ModelFiles) obj;
 		if (id != other.id)
 			return false;
-		if (!Arrays.equals(libraries, other.libraries))
+		if (libraries == null) {
+			if (other.libraries != null)
+				return false;
+		} else if (!libraries.equals(other.libraries))
 			return false;
 		if (optionalFiles == null) {
 			if (other.optionalFiles != null)

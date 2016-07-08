@@ -1,7 +1,7 @@
 package de.bund.bfr.knime.pmm.combinedfsk.archive;
 
 import java.util.List;
-import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.jdom2.Element;
 
@@ -42,7 +42,7 @@ public class ModelFilesNode {
 			element.setAttribute(METADATA, model.getMetaData());
 
 		if (model.isSetLibraries()) {
-			Arrays.stream(model.getLibraries()).map(LibraryNode::new).map(LibraryNode::getElement)
+			model.getLibraries().stream().map(LibraryNode::new).map(LibraryNode::getElement)
 					.forEach(element::addContent);
 		}
 	}
@@ -62,8 +62,8 @@ public class ModelFilesNode {
 
 		List<Element> libElements = element.getChildren("library");
 		if (!libElements.isEmpty()) {
-			String[] libs = libElements.stream().map(LibraryNode::new).map(LibraryNode::getLibrary)
-					.toArray(size -> new String[size]);
+			List<String> libs = libElements.stream().map(LibraryNode::new).map(LibraryNode::getLibrary)
+					.collect(Collectors.toList());
 			modelFiles.setLibraries(libs);
 		}
 

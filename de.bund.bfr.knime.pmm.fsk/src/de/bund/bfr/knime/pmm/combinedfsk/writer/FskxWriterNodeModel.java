@@ -192,7 +192,7 @@ class FskxWriterNodeModel extends NodeModel {
 
 				// Adds libraries
 				if (!fskModel.getLibraries().isEmpty()) {
-					modelFiles.setLibraries(fskModel.getLibraries().stream().toArray(size -> new String[size]));
+					modelFiles.setLibraries(fskModel.getLibraries());
 
 					sharedLibraries.addAll(fskModel.getLibraries());
 				}
