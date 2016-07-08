@@ -35,7 +35,7 @@ public class ModelFiles {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(final int id) {
 		this.id = id;
 	}
 
@@ -250,7 +250,7 @@ public class ModelFiles {
 	 * @param libraries
 	 *            empty lists are ignored
 	 */
-	public void setLibraries(List<String> libraries) {
+	public void setLibraries(final List<String> libraries) {
 		if (!libraries.isEmpty()) {
 			this.libraries.clear();
 			this.libraries.addAll(libraries);

@@ -1,5 +1,8 @@
 package de.bund.bfr.knime.pmm.combinedfsk.archive;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.jdom2.Element;
 
 /**
@@ -23,16 +26,16 @@ public class FskxMetaDataNode {
 		}
 	}
 
-	public ModelFiles[] getModels() {
+	public List<ModelFiles> getModels() {
 		return element.getChildren("model").stream().map(ModelFilesNode::new).map(ModelFilesNode::getModel)
-				.toArray(size -> new ModelFiles[size]);
+				.collect(Collectors.toList());
 	}
 
-	public Link[] getLinks() {
+	public List<Link> getLinks() {
 		return element.getChildren("link").stream().map(LinkNode::new).map(LinkNode::getLink)
-				.toArray(size -> new Link[size]);
+				.collect(Collectors.toList());
 	}
-	
+
 	public Element getElement() {
 		return element;
 	}

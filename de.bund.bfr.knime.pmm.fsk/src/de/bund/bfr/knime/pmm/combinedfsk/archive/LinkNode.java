@@ -17,7 +17,7 @@ public class LinkNode {
 
 	private final Element element;
 
-	public LinkNode(Link link) {
+	public LinkNode(final Link link) {
 		element = new Element("link");
 		element.setAttribute(ORIG_MODEL, Integer.toString(link.originModelId));
 		element.setAttribute(ORIG_VAR, link.originVar);
