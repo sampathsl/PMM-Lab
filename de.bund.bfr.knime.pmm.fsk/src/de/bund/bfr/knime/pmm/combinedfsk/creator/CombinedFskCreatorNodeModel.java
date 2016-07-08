@@ -3,11 +3,8 @@ package de.bund.bfr.knime.pmm.combinedfsk.creator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -117,56 +114,65 @@ public class CombinedFskCreatorNodeModel extends NodeModel {
 	@Override
 	protected PortObject[] execute(PortObject[] inObjects, ExecutionContext exec) throws Exception {
 
+		FskModel fskModel = new FskModel();
+
 		// Reads model script
-		String model;
 		try {
-			model = readScript(modelScript.getStringValue()).getScript();
+			String model = readScript(modelScript.getStringValue()).getScript();
+			fskModel.setModelScript(model);
 		} catch (IOException error) {
 			error.printStackTrace();
 			LOGGER.warn(error.getMessage());
-			model = "";
 		}
 
 		// Reads parameters script
-		String param;
 		try {
-			param = readScript(paramScript.getStringValue()).getScript();
+			String param = readScript(paramScript.getStringValue()).getScript();
+			fskModel.setParametersScript(param);
 		} catch (IOException error) {
 			error.printStackTrace();
 			LOGGER.warn(error.getMessage());
-			param = "";
 		}
 
 		// Reads visualization script
-		String viz;
 		try {
-			viz = readScript(vizScript.getStringValue()).getScript();
+			String viz = readScript(vizScript.getStringValue()).getScript();
+			fskModel.setVisualizationScript(viz);
 		} catch (IOException error) {
 			error.printStackTrace();
 			LOGGER.warn(error.getMessage());
-			viz = "";
 		}
 
 		// Reads model meta data
-		FSMRTemplate template;
 		try (InputStream is = FileUtil.openInputStream(metadata.getStringValue())) {
 			// Finds the workbook instance for XLSX file
 			XSSFWorkbook workbook = new XSSFWorkbook(is);
-			template = FSMRUtils.processSpreadsheet(workbook);
+			FSMRTemplate template = FSMRUtils.processSpreadsheet(workbook);
+			fskModel.setTemplate(template);
 		}
 
 		// Reads R libraries
-		Set<File> libs = new HashSet<>();
 		if (libraries.getStringArrayValue() != null && libraries.getStringArrayValue().length > 0) {
 			try {
-				collectLibs().stream().map(Path::toFile).forEach(libs::add);
+				List<String> libNames = Arrays.stream(libraries.getStringArrayValue())
+						.map(fullName -> fullName.split("\\.")[0]).collect(Collectors.toList());
+
+				// Only install missing libraries
+				LibRegistry libRegistry = LibRegistry.instance();
+				List<String> missingLibs = libNames.stream().filter(lib -> !libRegistry.isInstalled(lib))
+						.collect(Collectors.toList());
+				if (!missingLibs.isEmpty()) {
+					libRegistry.installLibs(missingLibs);
+				}
+
+				// Sets libraries in the FSK model
+				fskModel.setLibraries(libNames);
 			} catch (RException | REXPMismatchException e) {
 				LOGGER.error(e.getMessage());
 			}
 		}
 
 		// Return port object
-		FskModel fskModel = new FskModel(model, param, viz, template, null, libs);
 		CombinedFskPortObject portObject = new CombinedFskPortObject(new FskModel[] { fskModel }, new VariableLink[] {});
 		return new PortObject[] { portObject };
 	}
@@ -209,22 +215,5 @@ public class CombinedFskCreatorNodeModel extends NodeModel {
 			e.printStackTrace();
 			throw new IOException(trimmedPath + ": cannot be read");
 		}
-	}
-
-	private Set<Path> collectLibs() throws IOException, RException, REXPMismatchException {
-
-		List<String> libNames = Arrays.stream(libraries.getStringArrayValue()).map(libName -> libName.split("\\.")[0])
-				.collect(Collectors.toList());
-
-		LibRegistry libRegistry = LibRegistry.instance();
-		// Out of all the libraries name only install those missing
-		List<String> missingLibs = libNames.stream().filter(lib -> !libRegistry.isInstalled(lib))
-				.collect(Collectors.toList());
-
-		if (!missingLibs.isEmpty()) {
-			libRegistry.installLibs(missingLibs);
-		}
-
-		return libRegistry.getPaths(libNames);
 	}
 }

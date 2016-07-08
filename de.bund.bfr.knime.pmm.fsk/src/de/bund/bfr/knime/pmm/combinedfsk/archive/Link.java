@@ -1,19 +1,21 @@
-package de.bund.bfr.knime.pmm.combinedfsk.port;
+package de.bund.bfr.knime.pmm.combinedfsk.archive;
 
-import java.io.Serializable;
+/**
+ * Keeps the linkage between two models.
+ * <p>
+ * E.g: {@code }
+ * 
+ * @author Miguel Alba, BfR, Berlin
+ */
+public class Link {
 
-public class VariableLink implements Serializable {
-
-	private static final long serialVersionUID = 8394179818213471453L;
-	
 	public final int originModelId;
 	public final String originVar;
 
 	public final int destModelId;
 	public final String destVar;
-	
-	public VariableLink(final int originModelId, final String originVar,
-		final int destModelId, final String destVar) {
+
+	public Link(final int originModelId, final String originVar, final int destModelId, final String destVar) {
 		this.originModelId = originModelId;
 		this.originVar = originVar;
 		this.destModelId = destModelId;
@@ -39,7 +41,7 @@ public class VariableLink implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		VariableLink other = (VariableLink) obj;
+		Link other = (Link) obj;
 		if (destModelId != other.destModelId)
 			return false;
 		if (destVar == null) {
@@ -56,4 +58,6 @@ public class VariableLink implements Serializable {
 			return false;
 		return true;
 	}
+	
+	
 }

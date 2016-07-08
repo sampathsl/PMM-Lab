@@ -22,5 +22,8 @@ Bundle-Vendor: BfR
 Bundle-ClassPath: library.jar,
  libs/rengine-1.8.4.jar,
  libs/rserve-engine-1.8.4.jar
-Export-Package: de.bund.bfr.knime.pmm.fskx
+Export-Package: de.bund.bfr.knime.pmm.combinedfsk,
+ de.bund.bfr.knime.pmm.combinedfsk.archive,
+ de.bund.bfr.knime.pmm.combinedfsk.port,
+ de.bund.bfr.knime.pmm.fskx
 
