@@ -21,12 +21,11 @@ public class ModelFiles {
 
 	private int id;
 
-	private static final String MODEL_KEY = "model-script";
-	private static final String PARAM_KEY = "parameters-script";
-	private static final String VIZ_KEY = "visualization-script";
-	private static final String WORKSPACE_KEY = "workspace";
-	private static final String METADATA_KEY = "metadata";
-	private final Map<String, String> optionalFiles = new HashMap<>();
+	private static enum Key {
+		MODEL, PARAM, VIZ, WORKSPACE, METADATA
+	};
+
+	private final Map<Key, String> optionalFiles = new HashMap<>();
 
 	private String[] libraries;
 
@@ -48,7 +47,7 @@ public class ModelFiles {
 	 *             if the model script is not set
 	 */
 	public String getModelScript() {
-		return optionalFiles.get(MODEL_KEY);
+		return optionalFiles.get(Key.MODEL);
 	}
 
 	/**
@@ -59,52 +58,53 @@ public class ModelFiles {
 	 */
 	public void setModelScript(final String script) {
 		if (script != null && !script.isEmpty())
-			optionalFiles.put(MODEL_KEY, script);
+			optionalFiles.put(Key.MODEL, script);
 	}
-	
+
 	/**
 	 * Unsets the model script.
 	 */
 	public void unsetModelScript() {
-		optionalFiles.remove(MODEL_KEY);
+		optionalFiles.remove(Key.MODEL);
 	}
-	
+
 	/**
 	 * Returns whether the model script is set.
 	 * 
 	 * @return whether the model script is set
 	 */
 	public boolean isSetModelScript() {
-		return optionalFiles.containsKey(MODEL_KEY);
+		return optionalFiles.containsKey(Key.MODEL);
 	}
-	
+
 	// --- parameters script ---
 	/**
 	 * Returns the parameters script.
 	 *
 	 * @return the parameters script
-	 * @throws NullPointerException if the parameters script is not set
+	 * @throws NullPointerException
+	 *             if the parameters script is not set
 	 */
 	public String getParametersScript() {
-		return optionalFiles.get(PARAM_KEY);
+		return optionalFiles.get(Key.PARAM);
 	}
 
 	/**
 	 * Sets the parameters script.
 	 *
 	 * @param paramScript
-	 *		null or empty strings are ignored
+	 *            null or empty strings are ignored
 	 */
 	public void setParametersScript(final String script) {
 		if (script != null && !script.isEmpty())
-			optionalFiles.put(PARAM_KEY, script);
+			optionalFiles.put(Key.PARAM, script);
 	}
 
 	/**
 	 * Unsets the parameters script
 	 */
 	public void unsetParametersScript() {
-		optionalFiles.remove(PARAM_KEY);
+		optionalFiles.remove(Key.PARAM);
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class ModelFiles {
 	 * @return whether the parameters script is set
 	 */
 	public boolean isSetParametersScript() {
-		return optionalFiles.containsKey(PARAM_KEY);
+		return optionalFiles.containsKey(Key.PARAM);
 	}
 
 	// --- visualization script ---
@@ -121,27 +121,29 @@ public class ModelFiles {
 	 * Returns the visualization script.
 	 *
 	 * @return the visualization script
-	 * @throws NullPointerExceptionif the visualization script is not set
+	 * @throws NullPointerExceptionif
+	 *             the visualization script is not set
 	 */
 	public String getVisualizationScript() {
-		return optionalFiles.get(VIZ_KEY);
+		return optionalFiles.get(Key.VIZ);
 	}
 
 	/**
 	 * Sets the visualization script.
 	 *
-	 * @param visualizationScript null or empty strings are ignored
+	 * @param visualizationScript
+	 *            null or empty strings are ignored
 	 */
 	public void setVisualizationScript(final String visualizationScript) {
 		if (visualizationScript != null && !visualizationScript.isEmpty())
-			optionalFiles.put(VIZ_KEY, visualizationScript);
+			optionalFiles.put(Key.VIZ, visualizationScript);
 	}
 
 	/**
 	 * Unsets the visualization script.
 	 */
 	public void unsetsVisualizationScript() {
-		optionalFiles.remove(VIZ_KEY);
+		optionalFiles.remove(Key.VIZ);
 	}
 
 	/**
@@ -150,7 +152,7 @@ public class ModelFiles {
 	 * @return whether the visualization script is set
 	 */
 	public boolean isSetVisualizationScript() {
-		return optionalFiles.containsKey(VIZ_KEY);
+		return optionalFiles.containsKey(Key.VIZ);
 	}
 
 	// --- workspace ---
@@ -158,27 +160,29 @@ public class ModelFiles {
 	 * Returns the workspace.
 	 *
 	 * @return the workspace
-	 * @throws NullPointerException if the workspace is not set
+	 * @throws NullPointerException
+	 *             if the workspace is not set
 	 */
 	public String getWorkspace() {
-		return optionalFiles.get(WORKSPACE_KEY);
+		return optionalFiles.get(Key.WORKSPACE);
 	}
 
 	/**
 	 * Sets the workspace.
 	 *
-	 * @param workspace null or empty strings are ignored
+	 * @param workspace
+	 *            null or empty strings are ignored
 	 */
 	public void setWorkspace(final String workspace) {
 		if (workspace != null && !workspace.isEmpty())
-			optionalFiles.put(WORKSPACE_KEY, workspace);
+			optionalFiles.put(Key.WORKSPACE, workspace);
 	}
 
 	/**
 	 * Unsets the workspace.
 	 */
 	public void unsetWorkspace() {
-		optionalFiles.remove(WORKSPACE_KEY);
+		optionalFiles.remove(Key.WORKSPACE);
 	}
 
 	/**
@@ -187,7 +191,7 @@ public class ModelFiles {
 	 * @return whether the workspace is set
 	 */
 	public boolean isSetWorkspace() {
-		return optionalFiles.containsKey(WORKSPACE_KEY);
+		return optionalFiles.containsKey(Key.WORKSPACE);
 	}
 
 	// --- meta data ---
@@ -195,27 +199,29 @@ public class ModelFiles {
 	 * Returns the meta data.
 	 *
 	 * @return the meta data
-	 * @throws NullPointerException if the meta data is not set
+	 * @throws NullPointerException
+	 *             if the meta data is not set
 	 */
 	public String getMetaData() {
-		return optionalFiles.get(METADATA_KEY);
+		return optionalFiles.get(Key.METADATA);
 	}
 
 	/**
 	 * Sets the meta data.
 	 *
-	 * @param metadata null or empty strings are ignored
+	 * @param metadata
+	 *            null or empty strings are ignored
 	 */
 	public void setMetaData(final String metaData) {
 		if (metaData != null && !metaData.isEmpty())
-			optionalFiles.put(METADATA_KEY, metaData);
+			optionalFiles.put(Key.METADATA, metaData);
 	}
 
 	/**
 	 * Unsets the meta data.
 	 */
 	public void unsetMetaData() {
-		optionalFiles.remove(METADATA_KEY);
+		optionalFiles.remove(Key.METADATA);
 	}
 
 	/**
@@ -224,9 +230,9 @@ public class ModelFiles {
 	 * @return whether the meta data is set
 	 */
 	public boolean isSetMetaData() {
-		return optionalFiles.containsKey(METADATA_KEY);
+		return optionalFiles.containsKey(Key.METADATA);
 	}
-	
+
 	// --- libraries ---
 	/**
 	 * Returns the libraries.
@@ -243,7 +249,8 @@ public class ModelFiles {
 	/**
 	 * Sets the libraries.
 	 *
-	 * @param libraries null or empty arrays are ignored
+	 * @param libraries
+	 *            null or empty arrays are ignored
 	 */
 	public void setLibraries(String[] libraries) {
 		if (libraries != null && libraries.length > 0)
