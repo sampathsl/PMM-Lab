@@ -3,6 +3,7 @@ package de.bund.bfr.knime.pmm.combinedfsk.port;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.bund.bfr.openfsmr.FSMRTemplate;
@@ -13,50 +14,53 @@ import de.bund.bfr.openfsmr.FSMRTemplate;
 public class FskModel implements Serializable {
 
 	private static final long serialVersionUID = 7918060170303915080L;
-	
-	private String modelScript = null;
-	private String parametersScript = null;
-	private String visualizationScript = null;
+
+	private enum Key {
+		MODEL, PARAM, VIZ
+	};
+
+	private HashMap<Key, String> stringFields = new HashMap<>(3);
+
 	private FSMRTemplate template = null;
 	private File workspace = null;
-	private List<String> libraries = new ArrayList<>();
+	private ArrayList<String> libraries = new ArrayList<>();
 
 	// --- model script ---
 	/**
 	 * Return the model script.
 	 *
 	 * @return the model script
-	 * @throws RuntimeException if the model script is not set
+	 * @throws RuntimeException
+	 *             if the model script is not set
 	 */
 	public String getModelScript() {
-		if (modelScript == null)
-			throw new RuntimeException("the model script is not set");
-		return modelScript;
+		return stringFields.get(Key.MODEL);
 	}
 
 	/**
 	 * Sets the model script.
 	 *
-	 * @param modelScript
-	 * 		Contents of the model script. Null or empty strings are ignored.
+	 * @param script
+	 *            Contents of the model script. Null or empty strings are
+	 *            ignored.
 	 */
-	public void setModelScript(final String modelScript) {
-		if (modelScript != null && !modelScript.isEmpty())
-			this.modelScript = modelScript;	
+	public void setModelScript(final String script) {
+		if (script != null && !script.isEmpty())
+			stringFields.put(Key.MODEL, script);
 	}
 
 	/**
 	 * Unsets the model script.
 	 */
 	public void unsetModelScript() {
-		this.modelScript = null;
+		stringFields.remove(Key.MODEL);
 	}
 
 	/**
 	 * Returns whether the model script is set.
 	 */
 	public boolean isSetModelScript() {
-		return modelScript != null;
+		return stringFields.containsKey(Key.MODEL);
 	}
 
 	// --- parameters script ---
@@ -64,37 +68,37 @@ public class FskModel implements Serializable {
 	 * Return the parameters script.
 	 *
 	 * @return the parameters script
-	 * @throws RuntimeException if the parameters script is not set
+	 * @throws RuntimeException
+	 *             if the parameters script is not set
 	 */
 	public String getParametersScript() {
-		if (parametersScript == null)
-			throw new RuntimeException("the parameters script is not set");
-		return parametersScript;
+		return stringFields.get(Key.PARAM);
 	}
 
 	/**
 	 * Sets the parameters script.
 	 *
-	 * @param parametersScript
-	 *		Contents of the parameters script. Null or empty strings are ignored.
+	 * @param script
+	 *            Contents of the parameters script. Null or empty strings are
+	 *            ignored.
 	 */
-	public void setParametersScript(final String parametersScript) {
-		if (parametersScript != null && !parametersScript.isEmpty())
-			this.parametersScript = parametersScript;
+	public void setParametersScript(final String script) {
+		if (script != null && !script.isEmpty())
+			stringFields.put(Key.PARAM, script);
 	}
 
 	/**
 	 * Unsets the parameters script.
 	 */
 	public void unsetParametersScript() {
-		this.parametersScript = null;
+		stringFields.remove(Key.PARAM);
 	}
 
 	/**
 	 * Returns whether the parameters script is set.
 	 */
 	public boolean isSetParametersScript() {
-		return parametersScript != null;
+		return stringFields.containsKey(Key.PARAM);
 	}
 
 	// --- visualization script ---
@@ -102,38 +106,37 @@ public class FskModel implements Serializable {
 	 * Returns the visualization script.
 	 *
 	 * @return the visualization script
-	 * @throws RuntimeException if the visualization script is not set
+	 * @throws RuntimeException
+	 *             if the visualization script is not set
 	 */
 	public String getVisualizationScript() {
-		if (visualizationScript == null)
-			throw new RuntimeException("the visualization script is not set");
-		return visualizationScript;
+		return stringFields.get(Key.VIZ);
 	}
 
 	/**
 	 * Sets the visualization script.
 	 *
 	 * @param visualizationScript
-	 *		Contents of the visualization script. Null or empty strings are
-	 *		ignored.
+	 *            Contents of the visualization script. Null or empty strings
+	 *            are ignored.
 	 */
-	public void setVisualizationScript(final String visualizationScript) {
-		if (visualizationScript != null && !visualizationScript.isEmpty()) 
-			this.visualizationScript = visualizationScript;
+	public void setVisualizationScript(final String script) {
+		if (script != null && !script.isEmpty())
+			stringFields.put(Key.VIZ, script);
 	}
 
 	/**
 	 * Unsets the visualization script.
 	 */
 	public void unsetVisualizationScript() {
-		this.visualizationScript = null;
+		stringFields.remove(Key.VIZ);
 	}
 
 	/**
 	 * Returns whether the visualization script is set.
 	 */
 	public boolean isSetVisualizationScript() {
-		return visualizationScript != null;
+		return stringFields.containsKey(Key.VIZ);
 	}
 
 	/**
@@ -146,7 +149,8 @@ public class FskModel implements Serializable {
 	/**
 	 * Sets the FSMR template with model meta data.
 	 *
-	 * @param template null is ignored
+	 * @param template
+	 *            null is ignored
 	 */
 	public void setTemplate(final FSMRTemplate template) {
 		if (template != null)
@@ -172,7 +176,8 @@ public class FskModel implements Serializable {
 	 * Return the workspace.
 	 * 
 	 * @return the workspace
-	 * @throws RuntimeException if the workspace is not set
+	 * @throws RuntimeException
+	 *             if the workspace is not set
 	 */
 	public File getWorkspace() {
 		if (workspace == null)
@@ -183,7 +188,8 @@ public class FskModel implements Serializable {
 	/**
 	 * Sets the workspace.
 	 *
-	 * @param workspace null is ignored
+	 * @param workspace
+	 *            null is ignored
 	 */
 	public void setWorkspace(final File workspace) {
 		if (workspace == null)
@@ -217,7 +223,8 @@ public class FskModel implements Serializable {
 	/**
 	 * Sets the R library files.
 	 * 
-	 * @param libraries empty lists are ignored
+	 * @param libraries
+	 *            empty lists are ignored
 	 */
 	public void setLibraries(final List<String> libraries) {
 		if (!libraries.isEmpty()) {
@@ -225,14 +232,14 @@ public class FskModel implements Serializable {
 			this.libraries.addAll(libraries);
 		}
 	}
-	
+
 	/**
 	 * Unsets the R library files.
 	 */
 	public void unsetLibraries() {
 		libraries.clear();
 	}
-	
+
 	/**
 	 * Return whether the libraries are set.
 	 * 
