@@ -21,12 +21,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
@@ -44,6 +47,7 @@ import org.knime.core.node.port.PortObject;
 import org.knime.core.node.port.PortObjectSpec;
 import org.knime.core.node.port.PortType;
 import org.knime.core.util.FileUtil;
+import org.rosuda.REngine.REXPMismatchException;
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Model;
@@ -64,6 +68,9 @@ import de.bund.bfr.knime.pmm.common.math.MathUtilities;
 import de.bund.bfr.knime.pmm.common.writer.TableReader;
 import de.bund.bfr.knime.pmm.common.writer.WriterUtils;
 import de.bund.bfr.knime.pmm.fskx.RUri;
+import de.bund.bfr.knime.pmm.fskx.ZipUri;
+import de.bund.bfr.knime.pmm.fskx.controller.IRController.RException;
+import de.bund.bfr.knime.pmm.fskx.controller.LibRegistry;
 import de.bund.bfr.openfsmr.FSMRTemplate;
 import de.bund.bfr.pmfml.ModelClass;
 import de.bund.bfr.pmfml.PMFUtil;
@@ -123,6 +130,8 @@ class FskxWriterNodeModel extends NodeModel {
 			URI rUri = RUri.createURI();
 			List<ModelFiles> models = new LinkedList<>();
 			List<Link> links = new LinkedList<>();
+
+			Set<String> sharedLibraries = new HashSet<>();
 
 			for (FskModel fskModel : portObject.getModels()) {
 				ModelFiles modelFiles = new ModelFiles();
@@ -184,6 +193,8 @@ class FskxWriterNodeModel extends NodeModel {
 				// Adds libraries
 				if (!fskModel.getLibraries().isEmpty()) {
 					modelFiles.setLibraries(fskModel.getLibraries().stream().toArray(size -> new String[size]));
+
+					sharedLibraries.addAll(fskModel.getLibraries());
 				}
 
 				models.add(modelFiles);
@@ -194,9 +205,21 @@ class FskxWriterNodeModel extends NodeModel {
 			FskxMetaDataNode metaDataNode = new FskxMetaDataNode(modelArray, linkArray);
 
 			archive.addDescription(new DefaultMetaDataObject(metaDataNode.getElement()));
+
+			// Add libraries
+			if (!sharedLibraries.isEmpty()) {
+				URI zipUri = ZipUri.createURI();
+				List<File> files = LibRegistry.instance().getPaths(new LinkedList<>(sharedLibraries)).stream()
+						.map(Path::toFile).collect(Collectors.toList());
+				for (File f : files) {
+					archive.addEntry(f, f.getName(), zipUri);
+				}
+			}
+
 			archive.pack();
 
-		} catch (IOException | JDOMException | ParseException | TransformerException e1) {
+		} catch (IOException | JDOMException | ParseException | TransformerException | RException
+				| REXPMismatchException e1) {
 			e1.printStackTrace();
 		}
 
